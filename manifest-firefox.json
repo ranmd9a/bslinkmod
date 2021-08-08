@@ -1,0 +1,28 @@
+{
+	"name": "BS ダウンロードファイル名変更",
+	"version": "0.0.2",
+	"manifest_version": 2,
+	"description": "beatsaver のダウンロードアイコンクリック時、idと曲名を組み合わせたファイル名でダウンロードを行います。",
+	"icons": {
+		"32": "icons/icon32.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	},
+	"permissions": [
+		"downloads"
+	],
+	"background": {
+		"scripts": ["js/bg.js"]
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"https://beatsaver.com/*",
+				"https://cdn.beatsaver.com/*"
+			],
+			"js": [
+				"js/content.js"
+			]
+		}
+	]
+}
