@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "webpack": "npm run clean && .\\node_modules\\.bin\\webpack",
-    "clean": "rmdir /S /Q dist"
+    "clean": "IF exist dist rmdir /S /Q dist"
   },
   "author": "",
   "license": "ISC",

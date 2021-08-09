@@ -1,6 +1,6 @@
 {
 	"name": "BS ダウンロードファイル名変更",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"manifest_version": 2,
 	"description": "beatsaver のダウンロードアイコンクリック時、idと曲名を組み合わせたファイル名でダウンロードを行います。",
 	"icons": {

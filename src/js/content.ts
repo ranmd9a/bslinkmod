@@ -1,22 +1,29 @@
+import * as Utils from "./utils";
+
 const CLASS_NAME_MODDED = 'click-modded'; // 重複して click イベントを設定しないようにするためのフラグ
 const SHOW_KEY = true; // key を検索結果および個別Mapページに表示するかどうか
-const GET_METADATA = false; // metadata の取得をするかどうか
+const GET_MAP_DATA = true; // XMLHttpRequest で map データの取得をするかどうか
 
-function removeInvalidChar(text: string | null): string {
-	if (text == null) {
-		return '';
+/** GET /maps/id/{id} のレスポンス定義 (使用するもののみ) */
+interface IMapData {
+	id: string;
+	name: string;
+	description: string;
+	uploader: {[key: string]: any};
+	metadata?: {
+		bpm: string;
+		duration: number;
+		songName: string;
+		songAuthorName: string;
+		levelAuthorName: string;
+	};
+	stats?: {
+		plays: number;
+		downloads: number;
+		upvotes: number;
+		downvotes: number;
+		score: number;
 	}
-	return text
-		// 空白文字を半角空白に変換
-		.replace(/\s/g, " ")
-		// 制御コードとファイル名に使用できない「\ / : * ? " < > |」を削除
-		// eslint-disable-next-line no-control-regex
-		.replace(/[\u0000-\u001f\u007f\\/:*?"<>|]/g, '')
-		.trim();
-}
-
-function zeroPadding(value: number, length: number): string {
-	return `00000000${value}`.slice(-length);
 }
 
 function getMapperName(mapperLinks: NodeListOf<Element>, isMapPage = false): string {
@@ -32,7 +39,7 @@ function getMapperName(mapperLinks: NodeListOf<Element>, isMapPage = false): str
 				else {
 					mapper = mapperLink.textContent ?? '';
 				}
-				mapper = removeInvalidChar(mapper);
+				mapper = Utils.removeInvalidChar(mapper);
 				break;
 			}
 		}
@@ -40,14 +47,14 @@ function getMapperName(mapperLinks: NodeListOf<Element>, isMapPage = false): str
 	return mapper;
 }
 
-function getMetaData(id: string): Promise<{ [key: string]: any }> {
+function getMapInfo(id: string): Promise<IMapData> {
 	return new Promise((resolve, reject) => {
 		const xhr = new XMLHttpRequest();
 		xhr.responseType = 'json';
 
 		xhr.onload = function () {
 			if (xhr.status === 200) {
-				resolve(this.response?.metadata);
+				resolve(this.response);
 			}
 			else {
 				reject(new Error(xhr.statusText));
@@ -75,7 +82,7 @@ function addClickEventToSearchResult(beatmap: Element) {
 
 	let id: string = mapLink.getAttribute('href') ?? '';
 	id = id.substring(id.lastIndexOf('/') + 1);
-	const filename = `${id} (${removeInvalidChar(mapLink.textContent)} - ${mapper}).zip`;
+	const filename = `${id} (${Utils.removeInvalidChar(mapLink.textContent)} - ${mapper}).zip`;
 
 	downloadLink.onclick = (event: Event) => {
 		event.preventDefault();
@@ -121,6 +128,10 @@ function createListGroupItem(title: string, value: string, id: string): Element 
 }
 
 const myobserver = new MutationObserver(function () {
+	if (location.pathname != null && location.pathname.startsWith('/mappers')) {
+		// Mapperページ
+		return;
+	}
 	if (location.pathname != null && location.pathname.startsWith('/maps/')) {
 		// Map個別ページ
 		const id: string = location.pathname.substring(location.pathname.lastIndexOf('/') + 1);
@@ -131,7 +142,7 @@ const myobserver = new MutationObserver(function () {
 		const listGroup: Element = document.querySelector('div.list-group') as Element;
 		const mapperLinks: NodeListOf<Element> = listGroup.querySelectorAll('a');
 		const mapper: string = getMapperName(mapperLinks, true);
-		const filename = `${id} (${removeInvalidChar(cardHeader.textContent)} - ${mapper}).zip`
+		const filename = `${id} (${Utils.removeInvalidChar(cardHeader.textContent)} - ${mapper}).zip`
 		addClickEventToMapPage(cardHeader, filename);
 
 		cardHeader.classList.add(CLASS_NAME_MODDED);
@@ -141,28 +152,37 @@ const myobserver = new MutationObserver(function () {
 			const keyElm = createListGroupItem('Key', id, 'modKeyElmId');
 			listGroup.appendChild(keyElm);
 		}
-		if (GET_METADATA) {
-			// listGroup に duration を追加
+		if (GET_MAP_DATA) {
+			// listGroup に Downloads を追加
+			const downloadCountElm = createListGroupItem('Downloads', '-', 'modDownloadCountElmId');
+			listGroup.appendChild(downloadCountElm);
+			// listGroup に Duration を追加
 			const durationElm = createListGroupItem('Duration', '-', 'modDurationElmId');
 			listGroup.appendChild(durationElm);
+			// listGroup に BPM を追加
+			const bpmElm = createListGroupItem('BPM', '-', 'modBpmElmId');
+			listGroup.appendChild(bpmElm);
 
-			getMetaData(id)
-				.then((result: { [key: string]: any }) => {
-					const duration = result?.duration ?? 0;
-					let minutes = duration;
-					if (duration > 3600) {
-						minutes = duration % 3600;
+			getMapInfo(id)
+				.then((result: IMapData) => {
+					// Downloads の値をセット
+					const downloadCount = result?.stats?.downloads ?? 0;
+					let elm = document.getElementById('modDownloadCountElmId');
+					if (elm != null) {
+						elm.textContent = downloadCount.toLocaleString();
 					}
-					let durationText = `${zeroPadding(Math.floor(minutes / 60), 2)}:${zeroPadding(minutes % 60, 2)}`;
-					if (duration > 3600) {
-						durationText = `${Math.floor(duration / 3600)}:${durationText}`;
-					}
-					if (durationText.startsWith('0')) {
-						durationText = durationText.substring(1);
-					}
-					const elm = document.getElementById('modDurationElmId');
+					// Duration の値をセット
+					const duration = result?.metadata?.duration ?? 0;
+					const durationText = Utils.formatSeconds(duration);
+					elm = document.getElementById('modDurationElmId');
 					if (elm != null) {
 						elm.textContent = durationText;
+					}
+					// BPM の値をセット
+					const bpm = result?.metadata?.bpm ?? 0;
+					elm = document.getElementById('modBpmElmId');
+					if (elm != null) {
+						elm.textContent = `${bpm}`;
 					}
 				})
 				.catch((error: any) => {
