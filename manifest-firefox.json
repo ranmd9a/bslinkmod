@@ -1,8 +1,9 @@
 {
-	"name": "BS ダウンロードファイル名変更",
-	"version": "0.0.4",
+	"name": "__MSG_extName__",
+	"version": "0.0.5",
 	"manifest_version": 2,
-	"description": "beatsaver のダウンロードアイコンクリック時、idと曲名を組み合わせたファイル名でダウンロードを行います。",
+	"description": "__MSG_description__",
+	"default_locale": "en",
 	"icons": {
 		"32": "icons/icon32.png",
 		"48": "icons/icon48.png",

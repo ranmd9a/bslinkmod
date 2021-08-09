@@ -1,4 +1,4 @@
-# BS ダウンロードファイル名変更
+# BS ダウンロードファイル名変更 / BS download filename changer
 
 ## 概要 / Overview
 beatsaver ダウンロードアイコンクリック時、idと曲名を組み合わせたファイル名でダウンロードを行うように変更する Chrome 拡張機能です。  
@@ -34,7 +34,7 @@ This is a Chrome extension that changes the download file name to a combination 
 3. Open chrome://extensions in Chrome.
 4. Enable [Developer Mode] in the upper right corner.
 5. Click the [Load unpackaged] button and specify the directory extracted in step 1 (the directory which contains manifest.json).
-6. When [BS ダウンロードファイル名変更] appears in the list of extensions, close the extension screen.
+6. When [BS download filename changer] appears in the list of extensions, close the extension screen.
 
 ## アンインストール手順 / Uninstall
 1. Chrome で chrome://extensions を開きます。
@@ -45,6 +45,6 @@ This is a Chrome extension that changes the download file name to a combination 
 <br>
 
 1. Open chrome://extensions in Chrome.
-2. Click the [Remove] button of [BS ダウンロードファイル名変更] in the list of extensions.
+2. Click the [Remove] button of [BS download filename changer] in the list of extensions.
 3. Delete the directory extracted in step 1 of the installation procedure.
 4. If you have opened beatsaver.com in Chrome before uninstalling, reload it by pressing F5 key.

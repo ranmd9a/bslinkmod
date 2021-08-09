@@ -1,0 +1,8 @@
+{
+	"extName": {
+		"message": "BS download filename changer"
+	},
+	"description": {
+		"message": "This is a Chrome extension that changes the download file name to a combination of id and song title instead of a hash value in beatsaver.com."
+	}
+}
