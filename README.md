@@ -1,5 +1,10 @@
 # BS ダウンロードファイル名変更 / BS download filename changer
 
+**2021/08/20 beatsaver.com が標準で「id (曲名 - mapper名).zip」という名前でDLできるようになったようなので、この拡張機能をインストールする必要はなくなりました。そのうち非公開に変更します。**
+
+<br>
+<br>
+
 ## 概要 / Overview
 beatsaver ダウンロードアイコンクリック時、idと曲名を組み合わせたファイル名でダウンロードを行うように変更する Chrome 拡張機能です。  
 
