@@ -1,6 +1,6 @@
 {
 	"name": "__MSG_extName__",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"manifest_version": 2,
 	"description": "__MSG_description__",
 	"default_locale": "en",
@@ -18,8 +18,7 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"https://beatsaver.com/*",
-				"https://cdn.beatsaver.com/*"
+				"https://beatsaver.com/*"
 			],
 			"js": [
 				"js/content.js"

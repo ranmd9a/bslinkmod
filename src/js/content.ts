@@ -1,5 +1,6 @@
 import * as Utils from "./utils";
 
+// const DEBUG = false;
 const CLASS_NAME_MODDED = 'click-modded'; // 重複して click イベントを設定しないようにするためのフラグ
 const SHOW_KEY = true; // key を検索結果および個別Mapページに表示するかどうか
 const GET_MAP_DATA = true; // XMLHttpRequest で map データの取得をするかどうか
@@ -26,6 +27,7 @@ interface IMapData {
 	}
 }
 
+/*
 function getMapperName(mapperLinks: NodeListOf<Element>, isMapPage = false): string {
 	let mapper = '';
 	if (mapperLinks != null && mapperLinks.length > 0) {
@@ -46,6 +48,7 @@ function getMapperName(mapperLinks: NodeListOf<Element>, isMapPage = false): str
 	}
 	return mapper;
 }
+*/
 
 function getMapInfo(id: string): Promise<IMapData> {
 	return new Promise((resolve, reject) => {
@@ -66,6 +69,7 @@ function getMapInfo(id: string): Promise<IMapData> {
 	})
 }
 
+/*
 function addClickEventToSearchResult(beatmap: Element) {
 	const downloadLink: HTMLElement = beatmap.querySelector('a[title="Download zip"]') as HTMLElement;
 	if (downloadLink == null) {
@@ -99,7 +103,8 @@ function addClickEventToSearchResult(beatmap: Element) {
 		bsrLink?.appendChild(document.createTextNode(id));
 	}
 }
-
+*/
+/*
 function addClickEventToMapPage(cardHeader: Element, filename: string) {
 	const downloadLink: HTMLElement = cardHeader.querySelector('a[title="Download zip"]') as HTMLElement;
 	if (downloadLink == null) {
@@ -114,6 +119,7 @@ function addClickEventToMapPage(cardHeader: Element, filename: string) {
 		});
 	};
 }
+*/
 
 function createListGroupItem(title: string, value: string, id: string): Element {
 	const keyElm = document.createElement('div');
@@ -127,7 +133,7 @@ function createListGroupItem(title: string, value: string, id: string): Element 
 	return keyElm;
 }
 
-const myobserver = new MutationObserver(function () {
+const myobserver = new MutationObserver(function (mutations: MutationRecord[]) {
 	if (location.pathname != null && location.pathname.startsWith('/mappers')) {
 		// Mapperページ
 		return;
@@ -140,10 +146,10 @@ const myobserver = new MutationObserver(function () {
 			return;
 		}
 		const listGroup: Element = document.querySelector('div.list-group') as Element;
-		const mapperLinks: NodeListOf<Element> = listGroup.querySelectorAll('a');
-		const mapper: string = getMapperName(mapperLinks, true);
-		const filename = `${id} (${Utils.removeInvalidChar(cardHeader.textContent)} - ${mapper}).zip`
-		addClickEventToMapPage(cardHeader, filename);
+		// const mapperLinks: NodeListOf<Element> = listGroup.querySelectorAll('a');
+		// const mapper: string = getMapperName(mapperLinks, true);
+		// const filename = `${id} (${Utils.removeInvalidChar(cardHeader.textContent)} - ${mapper}).zip`
+		// addClickEventToMapPage(cardHeader, filename);
 
 		cardHeader.classList.add(CLASS_NAME_MODDED);
 
@@ -192,6 +198,36 @@ const myobserver = new MutationObserver(function () {
 		return;
 	}
 	// 検索結果
+	/*
+	let moddedCount = 0;
+	for (const mutation of mutations) {
+		for (let i = 0; i < mutation.addedNodes.length; i++) {
+			const addedNode = mutation.addedNodes[i];
+			if (!(addedNode instanceof HTMLElement)) {
+				continue;
+			}
+			if (!addedNode.classList.contains('search-results')) {
+				continue;
+			}
+			const beatmaps: HTMLCollectionOf<Element> = addedNode.getElementsByClassName('beatmap')
+			for (let i = 0; i < beatmaps.length; i++) {
+				const beatmap = beatmaps[i];
+				if (beatmap.classList.contains(CLASS_NAME_MODDED)) {
+					// 2021/08/10時点では search-result 以下の要素を全部再作成しているらしく
+					// classList にフラグ用の値を追加しても無駄だが、念のため判定。
+					continue;
+				}
+				// addClickEventToSearchResult(beatmap);
+				moddedCount++;
+				beatmap.classList.add(CLASS_NAME_MODDED);
+			}
+		}
+	}
+	if (DEBUG) {
+		console.log(`moddedCount: ${moddedCount}`);
+	}
+	*/
+	/*
 	const beatmaps: HTMLCollectionOf<Element> = document.getElementsByClassName('beatmap')
 	for (let i = 0; i < beatmaps.length; i++) {
 		const beatmap = beatmaps[i];
@@ -201,6 +237,7 @@ const myobserver = new MutationObserver(function () {
 		addClickEventToSearchResult(beatmap);
 		beatmap.classList.add(CLASS_NAME_MODDED);
 	}
+	*/
 })
 
 const config = {
